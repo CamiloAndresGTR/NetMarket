@@ -1,0 +1,13 @@
+/*
+Proceso de desarrollo de la solución:
+	1. Crear un Blank solution (Para este caso llamado NetMarket)
+	2. Crear los proyectos o capas de tipo class library NetCore
+		2.1 Application ->BusinessLogic
+		2.2 Domain -> Core
+		2.3 Presentation -> WebApi
+	3. Crear las entidades en el proyecto Core/Entities 
+	4. Crear las interfaces para los métodos que van a ser aplicados a las entidades
+	5. En el proyecto BusinessLogic Crear la carpeta Data/Config y en ella crear la configuración o caracteristicas de los campos de las entidades definidas en Entities
+	6. Crear el Db context e instanciarlo en el startup
+	7. crear las migraciones
+	8. En el progrm.cs instanciar el proyecto WebApi para el inicio y el uso del DBcontex, migrations y logger. Esto ocurre al iniciar el programa

@@ -1,0 +1,56 @@
+[
+  {
+    "Name": "Pantalon",
+    "Description": "Pantalon casual para eventos sports",
+    "Stock": 100,
+    "TradeMarkId": 1,
+    "CategoryId": 1,
+    "Price": 120,
+    "Image": ""
+  },
+  {
+    "Name": "Camisa",
+    "Description": "Camisa para eventos casuales",
+    "Stock": 600,
+    "TradeMarkId": 2,
+    "CategoryId": 2,
+    "Price": 60,
+    "Image": ""
+  },
+  {
+    "Name": "Camiseta",
+    "Description": "Camisa para paseos al aire libre",
+    "Stock": 500,
+    "TradeMarkId": 3,
+    "CategoryId": 1,
+    "Price": 50,
+    "Image": ""
+  },
+  {
+    "Name": "Zapato",
+    "Description": "Zapato para eventos especiales",
+    "Stock": 1000,
+    "TradeMarkId": 4,
+    "CategoryId": 1,
+    "Price": 120,
+    "Image": ""
+  },
+  {
+    "Name": "Tenis",
+    "Description": "Para correr al aire libre",
+    "Stock": 600,
+    "TradeMarkId": 2,
+    "CategoryId": 3,
+    "Price": 120,
+    "Image": ""
+  },
+  {
+    "Name": "Bordado",
+    "Description": "Traje de Bano",
+    "Stock": 200,
+    "TradeMarkId": 1,
+    "CategoryId": 4,
+    "Price": 500,
+    "Image": ""
+  }
+]
