@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.DTOs;
+using WebApi.Errors;
 
 namespace WebApi.Controllers
 {
-    [Route("api/camilin/v1/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+
+    public class ProductsController : BaseApiController
     {
         //Inyectar Mapper
         private readonly IMapper _mapper;
@@ -44,6 +44,12 @@ namespace WebApi.Controllers
             //En este caso la relación entre producto y marca, categoria
             var spec = new ProductWithCategoryAndTradeMarkSpecification(id);
             var product = await _genericRepository.GetByIdWithSpec(spec);
+            //Crear un condicional para definir un mensade de error personalizado de acuerdo a lo creado en
+            //la clase CodeErrorResponse, puedo enviarlo solamente con el codigo o puedo definir el mensaje personalizado
+            if (product == null)
+            {
+                return NotFound(new CodeErrorResponse(404, "El producto no existe"));
+            }
             return _mapper.Map<Product, ProductDTO>(product);
         }
 

@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    [Route("api/camilin/v1/[controller]")]
-    [ApiController]
-    public class TradeMarksController : ControllerBase
+
+    public class TradeMarksController : BaseApiController
     {
         private readonly IGenericRepository<TradeMark> _tradeMarkRepository;
         public TradeMarksController(IGenericRepository<TradeMark> tradeMarkRepository)
