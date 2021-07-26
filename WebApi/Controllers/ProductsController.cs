@@ -14,16 +14,17 @@ namespace WebApi.Controllers
     public class ProductsController : ControllerBase
     {
         //Crear la inyección para que trabaje con ProductoRepository
-        private readonly IProductRepository _productRepository;
-        public ProductsController(IProductRepository productRepository)
+        //private readonly IProductRepository _productRepository;
+        private readonly IGenericRepository<Product> _genericRepository;
+        public ProductsController(IGenericRepository<Product> genericRepository)
         {
-            _productRepository = productRepository;
+            _genericRepository = genericRepository;
         }
         //Vamos a crear un metodo controller de tipo get para obtener toda la lista de productos
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            var products = await _productRepository.GetProductsAsync();
+            var products = await _genericRepository.GetAllAsync();
             return Ok(products);
         }
         //Vamos a crear un metodo controller de tipo get para obtener el producto por id
@@ -31,7 +32,7 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return await _productRepository.GetProductByIdAsync(id);
+            return await _genericRepository.GetByIdAsync(id);
         }
 
     }
