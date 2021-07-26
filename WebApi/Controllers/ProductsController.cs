@@ -29,9 +29,9 @@ namespace WebApi.Controllers
         }
         //Vamos a crear un metodo controller de tipo get para obtener toda la lista de productos
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<List<Product>>> GetProducts(string sort, int? marca, int? categoria)
         {
-            var spec = new ProductWithCategoryAndTradeMarkSpecification();
+            var spec = new ProductWithCategoryAndTradeMarkSpecification(sort, marca, categoria);
             var products = await _genericRepository.GetAllWithSpec(spec);
             return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductDTO>>(products));
         }
