@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.DTOs;
 
 namespace WebApi
 {
@@ -36,7 +37,8 @@ namespace WebApi
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
-
+            //Agregar el service de automapper
+            services.AddAutoMapper(typeof(MappingProfiles));
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddControllers();
         }

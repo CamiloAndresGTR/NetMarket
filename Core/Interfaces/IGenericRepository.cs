@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,11 @@ namespace Core.Interfaces
         Task<T> GetByIdAsync(int id);
         //Creamos un método generico para traer una lista de todos los elementos de una entidad
         Task<IReadOnlyList<T>> GetAllAsync();
-
+        //Creamos un método que traiga por Id pero cn especificaciones o includes y where
+        Task<T> GetByIdWithSpec(ISpecification<T> spec);
+        //Creamos un método generico para traer una lista de todos los elementos de una entidad
+        //pero cn especificaciones o includes y where
+        Task<IReadOnlyList<T>> GetAllWithSpec(ISpecification<T> spec);
 
     }
 }
