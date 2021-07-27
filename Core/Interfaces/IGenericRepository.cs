@@ -21,6 +21,8 @@ namespace Core.Interfaces
         //Creamos un método generico para traer una lista de todos los elementos de una entidad
         //pero cn especificaciones o includes y where
         Task<IReadOnlyList<T>> GetAllWithSpec(ISpecification<T> spec);
+        //Método para contar elementos de forma asincrona
+        Task<int> CountAsync(ISpecification<T> spec);
 
     }
 }
