@@ -9,9 +9,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    [Route("api/camilin/v1/[controller]")]
-    [ApiController]
-    public class CategoriesController : ControllerBase
+    public class CategoriesController : BaseApiController
     {
         private readonly IGenericRepository<Category> _categoryRepository;
         public CategoriesController(IGenericRepository<Category> categoryRepository)

@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.DTOs;
+using WebApi.Errors;
 
 namespace WebApi.Controllers
 {
-    [Route("api/camilin/v1/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+ 
+    public class ProductsController : BaseApiController
     {
         //Inyectar Mapper
         private readonly IMapper _mapper;
@@ -44,6 +44,11 @@ namespace WebApi.Controllers
             //En este caso la relación entre producto y marca, categoria
             var spec = new ProductWithCategoryAndTradeMarkSpecification(id);
             var product = await _genericRepository.GetByIdWithSpec(spec);
+
+            if (product == null)
+            {
+                return NotFound(new CodeErrorResponse(404));
+            }
             return _mapper.Map<Product, ProductDTO>(product);
         }
 

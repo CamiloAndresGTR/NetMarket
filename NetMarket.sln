@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{414643
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{4C8727B6-19F5-4570-A3EB-F70E5F5D5ED5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevelopmentInstructions", "DevelopmentInstructions", "{D89E345A-E507-4663-ABCD-06973AD0941A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ZDevelopmentInstructions", "ZDevelopmentInstructions", "{D89E345A-E507-4663-ABCD-06973AD0941A}"
 	ProjectSection(SolutionItems) = preProject
 		DevInstructions.txt = DevInstructions.txt
 	EndProjectSection
