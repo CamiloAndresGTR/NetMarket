@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31424.327
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{8DA5AC50-5F4A-43CF-BC1D-8A97612C5594}"
 EndProject
@@ -9,13 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "BusinessLo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{64986C15-2A4B-4C55-83AC-506630E37D94}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{F8EF6DB1-9867-408C-9C6D-3EB9563F1C5A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{4146431B-3425-4522-BB4B-7240E10813EF}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{4C8727B6-19F5-4570-A3EB-F70E5F5D5ED5}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevelopmentInstructions", "DevelopmentInstructions", "{D89E345A-E507-4663-ABCD-06973AD0941A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ZDevelopmentInstructions", "ZDevelopmentInstructions", "{D89E345A-E507-4663-ABCD-06973AD0941A}"
 	ProjectSection(SolutionItems) = preProject
 		DevInstructions.txt = DevInstructions.txt
 	EndProjectSection
@@ -41,11 +35,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{8DA5AC50-5F4A-43CF-BC1D-8A97612C5594} = {4C8727B6-19F5-4570-A3EB-F70E5F5D5ED5}
-		{7BB477D9-3BE5-4D78-86AD-C590D0519A5D} = {F8EF6DB1-9867-408C-9C6D-3EB9563F1C5A}
-		{64986C15-2A4B-4C55-83AC-506630E37D94} = {4146431B-3425-4522-BB4B-7240E10813EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E877508-FA0D-41FC-8C14-81C8BFA07603}
