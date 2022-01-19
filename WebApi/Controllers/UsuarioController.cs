@@ -1,7 +1,11 @@
 ﻿using Core.Entities;
+using Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.Errors;
@@ -12,18 +16,26 @@ namespace WebApi.Controllers
     public class UsuarioController : BaseApiController
     {
         /// <summary>
-        /// Instanciar los objetos userManager basado en Usuario y SignInManager
+        /// Instanciar los objetos userManager basado en Usuario, SignInManager y tokenService
         /// </summary>
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
+        private readonly ITokenService _tokenService;
 
 
-        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager)
+        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ITokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenService = tokenService;
+            
         }
 
+        /// <summary>
+        /// Método para el incio de sesión
+        /// </summary>
+        /// <param name="loginDto"></param>
+        /// <returns></returns>
         [HttpPost("login")]
         public async Task<ActionResult<UsuarioDto>> Login(LoginDto loginDto)
         {
@@ -42,12 +54,17 @@ namespace WebApi.Controllers
             { 
              Email = usuario.Email,
              UserName = usuario.UserName,
-             Token = "Este es el token de usuario",
+             Token = _tokenService.CreateToken(usuario),
              Nombre = usuario.Nombre,
              Apellido = usuario.Apellido
             };
         }
 
+        /// <summary>
+        /// Método para el registro de un nuevo usuario
+        /// </summary>
+        /// <param name="registrarDto"></param>
+        /// <returns></returns>
         [HttpPost("registro")]
         public async Task<ActionResult<UsuarioDto>> Resgistro(RegistrarDto registrarDto)
         {
@@ -68,13 +85,50 @@ namespace WebApi.Controllers
                 Nombre = usuario.Nombre,
                 Apellido= usuario.Apellido,
                 Email = usuario.Email,
-                Token = "Un token de usuario",
+                Token = _tokenService.CreateToken(usuario),
                 UserName = usuario.UserName
             };
             
         
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<UsuarioDto>> GetUsuario()
+        {
+            var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            var usuario = await _userManager.FindByEmailAsync(email);
+            return new UsuarioDto()
+            {
+                Nombre=usuario.Nombre,
+                Apellido=usuario.Apellido,
+                Email=usuario.Email,
+                UserName = usuario.UserName,
+                Token = _tokenService.CreateToken(usuario)
+            };
+        }
 
+
+        /// <summary>
+        /// Método para validar si un email ya está registrado en la base de datos
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [HttpGet("emailvalido")]
+        public async Task<ActionResult<bool>> ValidarEmail([FromQuery]string email)
+        {
+            var usuario = await _userManager.FindByEmailAsync(email);
+            if (usuario == null) return false;
+            return true;
+        }
+
+        [Authorize]
+        [HttpGet("direccion")]
+        public async Task<ActionResult<Direccion>> GetDireccion()
+        {
+            var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            var usuario = await _userManager.FindByEmailAsync(email);
+            return usuario.Direccion;
+        }
     }
 }
