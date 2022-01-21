@@ -15,6 +15,8 @@ namespace WebApi.DTOs
                 //Se puede o no hacer con lo siguiente dependiendo lo especifico que quiera ser
                 .ForMember(p => p.CategoryName, x => x.MapFrom(a => a.Category.Name))
                 .ForMember(p => p.TradeMarkName, x => x.MapFrom(a => a.TradeMark.Name));
+
+            CreateMap<Direccion, DireccionDto>().ReverseMap();
         }
     }
 }

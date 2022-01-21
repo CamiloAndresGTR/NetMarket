@@ -93,7 +93,9 @@ namespace WebApi
             //{
             //    app.UseDeveloperExceptionPage();
             //}
+            
 
+            //Se hace la declaración del uso del middleware, para este caso el ExceptionMiddleware que se creó
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseStatusCodePagesWithReExecute("/errors","?code={0}");

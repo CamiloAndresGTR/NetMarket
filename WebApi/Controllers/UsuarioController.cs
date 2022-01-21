@@ -1,4 +1,5 @@
-﻿using Core.Entities;
+﻿using AutoMapper;
+using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +10,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.Errors;
+using WebApi.Extensions;
 
 namespace WebApi.Controllers
 {
@@ -21,13 +23,15 @@ namespace WebApi.Controllers
         private readonly UserManager<Usuario> _userManager;
         private readonly SignInManager<Usuario> _signInManager;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
 
-        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ITokenService tokenService)
+        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ITokenService tokenService, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _mapper = mapper;
             
         }
 
@@ -96,8 +100,11 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<UsuarioDto>> GetUsuario()
         {
-            var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            var usuario = await _userManager.FindByEmailAsync(email);
+            //var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            //var usuario = await _userManager.FindByEmailAsync(email);
+
+            var usuario = await _userManager.BuscarUsuarioAsync(HttpContext.User);
+
             return new UsuarioDto()
             {
                 Nombre=usuario.Nombre,
@@ -124,11 +131,29 @@ namespace WebApi.Controllers
 
         [Authorize]
         [HttpGet("direccion")]
-        public async Task<ActionResult<Direccion>> GetDireccion()
+        public async Task<ActionResult<DireccionDto>> GetDireccion()
         {
-            var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            var usuario = await _userManager.FindByEmailAsync(email);
-            return usuario.Direccion;
+            //var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            //var usuario = await _userManager.FindByEmailAsync(email);
+            var usuario = await _userManager.BuscarUsuarioConDireccionAsync(HttpContext.User);
+
+            return _mapper.Map<Direccion, DireccionDto>(usuario.Direccion);
+        }
+
+        [Authorize]
+        [HttpPut("direccion")]
+        public async Task<ActionResult<DireccionDto>> PutDireccion(DireccionDto direccion)
+        {
+            var usuario = await _userManager.BuscarUsuarioConDireccionAsync(HttpContext.User);
+            usuario.Direccion = _mapper.Map<DireccionDto, Direccion>(direccion);
+            var resultado = await _userManager.UpdateAsync(usuario);
+            if (resultado.Succeeded) return Ok(_mapper.Map<Direccion, DireccionDto>(usuario.Direccion));
+            return BadRequest("No se pudo actualizar la dirección");
+            
+
+            
+
+
         }
     }
 }
