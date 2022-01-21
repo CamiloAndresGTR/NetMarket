@@ -9,49 +9,41 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using WebApi.Errors;
 
-namespace WebApi.Middleware
+namespace WebApi.MiddleWare
 {
-    public class ExceptionMiddleware
+    public class ExceptionMiddleWare
     {
-
+        //Inyeccion de dependencias
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly ILogger<ExceptionMiddleWare> _logger;
         private readonly IHostEnvironment _env;
-
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
+        public ExceptionMiddleWare(RequestDelegate next, ILogger<ExceptionMiddleWare> logger, IHostEnvironment env)
         {
             _next = next;
             _logger = logger;
             _env = env;
         }
-
-        //Cada vez que se haga una transacción en el backend van a entrar por este InvokeAsync
+        //Metodo asincrono para manejo de errores en todas las transacciones que entran al backend
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                //Si la transacción tiene resultado exitoso, ejecutamos el siguiente paso(Continuar con la ejecución)
+                //Si todo está bien en la transaccion pasa  a la siguiente transacción
                 await _next(context);
             }
             catch (Exception e)
             {
-                //Hacemos un log con la excepción y el mensaje de la misma
+                //Estructura del error en caso de que este ocurra, entregada en formato Json
                 _logger.LogError(e, e.Message);
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                //evaluar si está en ambiente de desarrollo
                 var response = _env.IsDevelopment()
                     ? new CodeErrorException((int)HttpStatusCode.InternalServerError, e.Message, e.StackTrace.ToString())
                     : new CodeErrorException((int)HttpStatusCode.InternalServerError);
-
-                //Mantener propiedades en minuscula en el json
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-                //Convertir la respuesta a formato json
-                var json = JsonSerializer.Serialize(response);
-                //Enviar la respuesta
+                var json = JsonSerializer.Serialize(response, options);
                 await context.Response.WriteAsync(json);
             }
         }
-
     }
 }
