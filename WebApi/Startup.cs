@@ -30,6 +30,8 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
 
+            //Añadir el scoped de la interfaz ICarritoCompraRepository
+            services.AddScoped<ICarritoCompraRepository, CarritoCompraRepository>();
             //Añadir el scoped de la interfaz ITokenService para que pueda ser utilizado en cualquier parte del proyecto
             services.AddScoped<ITokenService, TokenService>();  
             //Crear la variable builder para añadir el servicio de identityCore basado en la clase Usuario
@@ -69,7 +71,7 @@ namespace WebApi
             });
 
             //Conexión para RedisCache
-            services.AddSingleton<ConnectionMultiplexer>(c =>
+            services.AddSingleton<IConnectionMultiplexer>(c =>
            {
                var configuration = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"), true);
                return ConnectionMultiplexer.Connect(configuration);
