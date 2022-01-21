@@ -1,7 +1,5 @@
 using BusinessLogic.Data;
-using Core.Entities;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,17 +35,6 @@ namespace WebApi
                     //Se añade la siguiente línea para que al ejecutar el programa se cargue la información de
                     ////maestros a las tablas de acuerdo a la lógica implementada, solo si las tablas están vacías
                     await MarketDbContextData.LoadDataAsync(context, loggerFactory);
-
-                    //Instanciar el userManager que es el encargado de la migración para Seguridad
-                    var userManager = services.GetRequiredService<UserManager<Usuario>>();
-                    //definir el identityContext que va a ser la instacia del context de seguridad
-                    var identityContext = services.GetRequiredService<SeguridadDbContext>();
-                    // Ejecutar el proceso de migración
-                    await identityContext.Database.MigrateAsync();
-
-                    //Registrar el usuario creado como data inicial
-                    await SeguridadDbContextData.SeedUserAsync(userManager);
-
                 }
                 catch (Exception e)
                 {

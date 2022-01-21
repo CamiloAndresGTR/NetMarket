@@ -1,4 +1,4 @@
-using Core.Entities;
+﻿using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
- 
+
     public class TradeMarksController : BaseApiController
     {
         private readonly IGenericRepository<TradeMark> _tradeMarkRepository;
