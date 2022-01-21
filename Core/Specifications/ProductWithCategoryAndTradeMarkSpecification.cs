@@ -11,7 +11,9 @@ namespace Core.Specifications
     {
         //Constructor para crear la consulta sin filtro (Select * from) en el controller
         public ProductWithCategoryAndTradeMarkSpecification(ProductSpecificationParams productParams)
-            : base(x => (!productParams.Marca.HasValue || x.TradeMarkId == productParams.Marca) &&
+            : base(x => 
+            (string.IsNullOrEmpty(productParams.Search) || x.Name.Contains(productParams.Search)) &&
+            (!productParams.Marca.HasValue || x.TradeMarkId == productParams.Marca) &&
             (!productParams.Categoria.HasValue || x.CategoryId == productParams.Categoria))
         {
             AddInclude(p => p.Category);
@@ -20,10 +22,17 @@ namespace Core.Specifications
             //switch con las opciones para ordenamiento
             // ApplyPaging(0, 5)
             ApplyPaging(productParams.PageSize * (productParams.PageIndex - 1), productParams.PageSize);
+
             if (!string.IsNullOrEmpty(productParams.Sort))
             {
                 switch (productParams.Sort)
                 {
+                    case "nombreAsc":
+                        AddOrderBy(p => p.Name);
+                        break;
+                    case "nombreDesc":
+                        AddOrderByDescending(p => p.Name);
+                        break;
                     case "priceAsc":
                         AddOrderBy(p => p.Price);
                         break;

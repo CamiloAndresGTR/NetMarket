@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessLogic.Data
 {
-    //Esta clase se usar en ProductWithCategorySpecification por ejemplo
+    //Esta clase se usa en ProductWithCategorySpecification por ejemplo
     public class SpecificationEvaluator<T> where T : ClaseBase
     {
         public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, ISpecification<T> spec)

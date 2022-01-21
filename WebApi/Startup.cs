@@ -6,18 +6,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using StackExchange.Redis;
 using System.Text;
-using System.Threading.Tasks;
 using WebApi.DTOs;
 using WebApi.MiddleWare;
 
@@ -73,6 +67,14 @@ namespace WebApi
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("IdentitySeguridad"));
             });
+
+            //Conexión para RedisCache
+            services.AddSingleton<ConnectionMultiplexer>(c =>
+           {
+               var configuration = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"), true);
+               return ConnectionMultiplexer.Connect(configuration);
+           });
+
             //Agregar el service de automapper
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddTransient<IProductRepository, ProductRepository>();
