@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
