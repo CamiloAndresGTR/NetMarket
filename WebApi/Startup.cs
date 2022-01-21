@@ -19,7 +19,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebApi.DTOs;
-using WebApi.Middleware;
+using WebApi.MiddleWare;
 
 namespace WebApi
 {
@@ -96,7 +96,7 @@ namespace WebApi
             
 
             //Se hace la declaración del uso del middleware, para este caso el ExceptionMiddleware que se creó
-            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseMiddleware<ExceptionMiddleWare>();
 
             app.UseStatusCodePagesWithReExecute("/errors","?code={0}");
 
