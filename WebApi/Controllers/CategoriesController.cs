@@ -1,4 +1,4 @@
-using Core.Entities;
+﻿using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
+
     public class CategoriesController : BaseApiController
     {
         private readonly IGenericRepository<Category> _categoryRepository;
@@ -31,4 +32,3 @@ namespace WebApi.Controllers
         }
     }
 }
-

@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
@@ -13,7 +13,7 @@ using WebApi.Errors;
 
 namespace WebApi.Controllers
 {
- 
+
     public class ProductsController : BaseApiController
     {
         //Inyectar Mapper
@@ -29,11 +29,25 @@ namespace WebApi.Controllers
         }
         //Vamos a crear un metodo controller de tipo get para obtener toda la lista de productos
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<Pagination<ProductDTO>>> GetProducts([FromQuery] ProductSpecificationParams productSpecificationParams)
         {
-            var spec = new ProductWithCategoryAndTradeMarkSpecification();
+            var spec = new ProductWithCategoryAndTradeMarkSpecification(productSpecificationParams);
             var products = await _genericRepository.GetAllWithSpec(spec);
-            return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductDTO>>(products));
+            var specCount = new ProductForCountingSpecification(productSpecificationParams);
+            var totalProducts = await _genericRepository.CountAsync(specCount);
+            var rounded = Math.Ceiling(Convert.ToDecimal(totalProducts / productSpecificationParams.PageSize));
+            var totalPages = Convert.ToInt32(rounded);
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductDTO>>(products);
+            return Ok(
+                new Pagination<ProductDTO>
+                {
+                    Count = totalProducts,
+                    Data = data,
+                    PageCount = totalPages,
+                    PageIndex = productSpecificationParams.PageIndex,
+                    PageSize = productSpecificationParams.PageSize
+                });
+            //return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductDTO>>(products));
         }
         //Vamos a crear un metodo controller de tipo get para obtener el producto por id
         //http://localhost:26992/api/camilin/v1/Products/1
@@ -44,10 +58,11 @@ namespace WebApi.Controllers
             //En este caso la relación entre producto y marca, categoria
             var spec = new ProductWithCategoryAndTradeMarkSpecification(id);
             var product = await _genericRepository.GetByIdWithSpec(spec);
-
+            //Crear un condicional para definir un mensade de error personalizado de acuerdo a lo creado en
+            //la clase CodeErrorResponse, puedo enviarlo solamente con el codigo o puedo definir el mensaje personalizado
             if (product == null)
             {
-                return NotFound(new CodeErrorResponse(404));
+                return NotFound(new CodeErrorResponse(404, "El producto no existe"));
             }
             return _mapper.Map<Product, ProductDTO>(product);
         }
