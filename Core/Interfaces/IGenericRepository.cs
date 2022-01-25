@@ -24,5 +24,10 @@ namespace Core.Interfaces
         //Método para contar elementos de forma asincrona
         Task<int> CountAsync(ISpecification<T> spec);
 
+        //Método para añadir elementos
+        Task<int> AddAsync(T entity);
+        // Método para actualizar elementos
+        Task<int> UpdateAsync(T entity);    
+
     }
 }

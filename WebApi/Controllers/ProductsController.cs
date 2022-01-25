@@ -71,5 +71,24 @@ namespace WebApi.Controllers
             return _mapper.Map<Product, ProductDTO>(product);
         }
 
+        [HttpPost]
+        public async Task<ActionResult<Product>> PostProduct(Product product)
+        { 
+            var resultado = await _genericRepository.AddAsync(product);
+
+            if (resultado == 0) throw new Exception("No se insertó el producto");
+
+            return Ok(product);
+
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Product>> PutProduct(int id, Product product)
+        { 
+            product.Id = id;
+            var resultado = await _genericRepository.UpdateAsync(product);
+            if (resultado == 0) throw new Exception("No se actualizó el producto");
+            return Ok(product);
+        }
     }
 }
