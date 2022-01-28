@@ -14,7 +14,7 @@ using WebApi.Extensions;
 
 namespace WebApi.Controllers
 {
-   
+
     public class UsuarioController : BaseApiController
     {
         /// <summary>
@@ -24,15 +24,17 @@ namespace WebApi.Controllers
         private readonly SignInManager<Usuario> _signInManager;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly IPasswordHasher<Usuario> _passwordHasher;
 
 
-        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ITokenService tokenService, IMapper mapper)
+        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ITokenService tokenService, IMapper mapper, IPasswordHasher<Usuario> passwordHasher)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _mapper = mapper;
-            
+            _passwordHasher = passwordHasher;
+
         }
 
         /// <summary>
@@ -43,24 +45,24 @@ namespace WebApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UsuarioDto>> Login(LoginDto loginDto)
         {
-            var usuario =  await _userManager.FindByEmailAsync(loginDto.Email);
+            var usuario = await _userManager.FindByEmailAsync(loginDto.Email);
 
             if (usuario == null)
-            { 
+            {
                 return Unauthorized(new CodeErrorResponse(401));
             }
-            var result = await _signInManager.CheckPasswordSignInAsync(usuario, loginDto.Password,false);
+            var result = await _signInManager.CheckPasswordSignInAsync(usuario, loginDto.Password, false);
             if (!result.Succeeded)
             {
                 return Unauthorized(new CodeErrorResponse(401));
             }
-            return new UsuarioDto() 
-            { 
-             Email = usuario.Email,
-             UserName = usuario.UserName,
-             Token = _tokenService.CreateToken(usuario),
-             Nombre = usuario.Nombre,
-             Apellido = usuario.Apellido
+            return new UsuarioDto()
+            {
+                Email = usuario.Email,
+                UserName = usuario.UserName,
+                Token = _tokenService.CreateToken(usuario),
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido
             };
         }
 
@@ -85,16 +87,46 @@ namespace WebApi.Controllers
                 return BadRequest(new CodeErrorResponse(400));
             }
             return new UsuarioDto()
-            { 
+            {
                 Nombre = usuario.Nombre,
-                Apellido= usuario.Apellido,
+                Apellido = usuario.Apellido,
                 Email = usuario.Email,
                 Token = _tokenService.CreateToken(usuario),
                 UserName = usuario.UserName
             };
-            
-        
+
+
         }
+
+        [HttpPut("actualizar/{id}")]
+        public async Task<ActionResult<UsuarioDto>> PutUsuario(string id, RegistrarDto registrarDto)
+        {
+
+            var usuario = await _userManager.FindByIdAsync(id);
+            if (usuario == null)
+            {
+                return NotFound(new CodeErrorResponse(404, "El usuario no existe"));
+            }
+            usuario.Nombre = registrarDto.Nombre;
+            usuario.Apellido = registrarDto.Apellido;
+            usuario.PasswordHash = _passwordHasher.HashPassword(usuario, registrarDto.Password);
+
+            var result = await _userManager.UpdateAsync(usuario);
+            if (!result.Succeeded) return BadRequest(new CodeErrorResponse(400, "No se pudo actualizar el usuario"));
+
+            return new UsuarioDto()
+            {
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                UserName = usuario.UserName,
+                Email = usuario.Email,
+                Token = _tokenService.CreateToken(usuario),
+                Imagen = usuario.Imagen
+            };
+
+
+        }
+
 
         [Authorize]
         [HttpGet]
@@ -107,9 +139,9 @@ namespace WebApi.Controllers
 
             return new UsuarioDto()
             {
-                Nombre=usuario.Nombre,
-                Apellido=usuario.Apellido,
-                Email=usuario.Email,
+                Nombre = usuario.Nombre,
+                Apellido = usuario.Apellido,
+                Email = usuario.Email,
                 UserName = usuario.UserName,
                 Token = _tokenService.CreateToken(usuario)
             };
@@ -122,7 +154,7 @@ namespace WebApi.Controllers
         /// <param name="email"></param>
         /// <returns></returns>
         [HttpGet("emailvalido")]
-        public async Task<ActionResult<bool>> ValidarEmail([FromQuery]string email)
+        public async Task<ActionResult<bool>> ValidarEmail([FromQuery] string email)
         {
             var usuario = await _userManager.FindByEmailAsync(email);
             if (usuario == null) return false;
@@ -149,9 +181,9 @@ namespace WebApi.Controllers
             var resultado = await _userManager.UpdateAsync(usuario);
             if (resultado.Succeeded) return Ok(_mapper.Map<Direccion, DireccionDto>(usuario.Direccion));
             return BadRequest("No se pudo actualizar la dirección");
-            
 
-            
+
+
 
 
         }

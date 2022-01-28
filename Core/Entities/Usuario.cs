@@ -13,5 +13,6 @@ namespace Core.Entities
         public string Apellido { get; set; }
 
         public Direccion Direccion { get; set; }
+        public string Imagen { get; set; }
     }
 }
