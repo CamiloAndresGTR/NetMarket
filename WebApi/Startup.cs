@@ -2,6 +2,7 @@ using BusinessLogic.Data;
 using BusinessLogic.Logic;
 using Core.Entities;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Text;
@@ -38,10 +40,13 @@ namespace WebApi
             var builder = services.AddIdentityCore<Usuario>();
             //Crear una nueva instancia para IdentityBuilder
             builder = new IdentityBuilder(builder.UserType, builder.Services);
+            //Añadir el RoleManager
+            builder.AddRoles<IdentityRole>();
             //Se añade el EntityFrameworkStores basado en la clase SeguridadDbContext
             builder.AddEntityFrameworkStores<SeguridadDbContext>();
             //Añadir el signInManager basado en la clase Usuario
             builder.AddSignInManager<SignInManager<Usuario>>();
+            
             
             //Añadir el servicio de autenticación y configurarlo para JwtBearer, se encarga de la validación del token
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt => 
@@ -60,6 +65,7 @@ namespace WebApi
             //Esto hace que cuando arranque la aplicación WebApi en ese momento se genere un objeto de tipo
             ////IGenericRepository en cada request del cliente
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            services.AddScoped(typeof(IGenericSeguridadRepository<>), (typeof(GenericSeguridadRepository<>)));
             // Instanciamos el DBContext en Startup
             services.AddDbContext<MarketDbContext>(opt =>
             {
@@ -76,6 +82,8 @@ namespace WebApi
                var configuration = ConfigurationOptions.Parse(Configuration.GetConnectionString("Redis"), true);
                return ConnectionMultiplexer.Connect(configuration);
            });
+
+            services.TryAddSingleton<ISystemClock, SystemClock>();
 
             //Agregar el service de automapper
             services.AddAutoMapper(typeof(MappingProfiles));

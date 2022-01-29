@@ -40,13 +40,15 @@ namespace WebApi
 
                     //Instanciar el userManager que es el encargado de la migración para Seguridad
                     var userManager = services.GetRequiredService<UserManager<Usuario>>();
+                    //Instanciar el roleManager
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                     //definir el identityContext que va a ser la instacia del context de seguridad
                     var identityContext = services.GetRequiredService<SeguridadDbContext>();
                     // Ejecutar el proceso de migración
                     await identityContext.Database.MigrateAsync();
 
                     //Registrar el usuario creado como data inicial
-                    await SeguridadDbContextData.SeedUserAsync(userManager);
+                    await SeguridadDbContextData.SeedUserAsync(userManager, roleManager);
 
                 }
                 catch (Exception e)
