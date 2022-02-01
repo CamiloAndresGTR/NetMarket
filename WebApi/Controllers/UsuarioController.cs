@@ -29,9 +29,11 @@ namespace WebApi.Controllers
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<Usuario> _passwordHasher;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-
-        public UsuarioController(UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ITokenService tokenService, IMapper mapper, IPasswordHasher<Usuario> passwordHasher, IGenericSeguridadRepository<Usuario> seguridadRepository)
+        public UsuarioController(
+            UserManager<Usuario> userManager, SignInManager<Usuario> signInManager, ITokenService tokenService, IMapper mapper,
+            IPasswordHasher<Usuario> passwordHasher, IGenericSeguridadRepository<Usuario> seguridadRepository, RoleManager<IdentityRole> roleManager)
         {
             _seguridadRepository = seguridadRepository;
             _userManager = userManager;
@@ -39,6 +41,7 @@ namespace WebApi.Controllers
             _tokenService = tokenService;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
+            _roleManager = roleManager;
 
         }
 
@@ -157,6 +160,46 @@ namespace WebApi.Controllers
                 });
 
         }
+
+        [HttpPut("role/{id}")]
+        public async Task<ActionResult<UsuarioDto>> PutRole(string id, RoleDto roleParam)
+        {
+            var role = await _roleManager.FindByNameAsync(roleParam.Nombre);
+
+            if (role == null)
+            {
+                return NotFound(new CodeErrorResponse(404, "El rol no existe"));
+            }
+            var usuario = await _userManager.FindByIdAsync(id);
+            if (usuario == null)
+            {
+                return NotFound(new CodeErrorResponse(404, "El usuario no existe"));
+            }
+            var usuarioDto = _mapper.Map<Usuario, UsuarioDto>(usuario);
+
+            if (roleParam.Status)
+            {
+                var resultado = await _userManager.AddToRoleAsync(usuario, roleParam.Nombre);
+                if (resultado.Succeeded)
+                {
+                    usuarioDto.Admin = true;
+                }
+                if (resultado.Errors.Any())
+                {
+                    if (resultado.Errors.Where(x => x.Code == "UserAlreadyInRole").Any())
+                    {
+                        usuarioDto.Admin = true;
+                    }
+                }
+            }
+            else
+            { 
+               var resultado = await _userManager.RemoveFromRoleAsync(usuario, roleParam.Nombre);
+                if (resultado.Succeeded) usuarioDto.Admin = false;
+            }
+            return usuarioDto;
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<ActionResult<UsuarioDto>> GetUsuario()
@@ -210,10 +253,6 @@ namespace WebApi.Controllers
             var resultado = await _userManager.UpdateAsync(usuario);
             if (resultado.Succeeded) return Ok(_mapper.Map<Direccion, DireccionDto>(usuario.Direccion));
             return BadRequest("No se pudo actualizar la dirección");
-
-
-
-
 
         }
     }
